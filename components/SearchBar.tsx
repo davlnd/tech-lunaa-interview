@@ -1,5 +1,3 @@
-"use client";
-
 interface SearchBarProps {
   value: string;
   onChange: (value: string) => void;
@@ -8,6 +6,9 @@ interface SearchBarProps {
 export default function SearchBar({ value, onChange }: SearchBarProps) {
   return (
     <div className="relative">
+      <label htmlFor="user-search" className="sr-only">
+        Buscar usuarios
+      </label>
       <svg
         className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400"
         xmlns="http://www.w3.org/2000/svg"
@@ -22,8 +23,10 @@ export default function SearchBar({ value, onChange }: SearchBarProps) {
           d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"
         />
       </svg>
+
       <input
-        type="text"
+        id="user-search"
+        type="search"
         placeholder="Buscar usuarios por nombre, email o empresa..."
         value={value}
         onChange={(e) => onChange(e.target.value)}

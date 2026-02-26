@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { type User } from "@/types/user";
+import { useCallback, useMemo, useState } from "react";
+import {CreateUserInput, type User} from "@/types/user";
 import SearchBar from "@/components/SearchBar";
 import UserCard from "@/components/UserCard";
 import CreateUserModal from "@/components/CreateUserModal";
@@ -17,40 +17,51 @@ export default function UserDashboard({ initialUsers }: UserDashboardProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { showToast } = useToast();
 
-  const filteredUsers = users.filter(
-    (user) =>
-      user.name.includes(search) ||
-      user.email.includes(search) ||
-      user.company.name.includes(search)
+  const filteredUsers = useMemo(
+    () =>
+      users.filter((user) => {
+        const searchLower = search.trim().toLowerCase();
+        if (!searchLower) return users;
+
+        return (
+          user.name.toLowerCase().includes(searchLower) ||
+          user.email.toLowerCase().includes(searchLower) ||
+          user.company.name.toLowerCase().includes(searchLower)
+        );
+      }),
+    [search, users],
   );
 
   const totalUsers = users.length;
   const matchedCount = filteredUsers.length;
 
-  const handleUserCreated = (input: {
-    name: string;
-    email: string;
-    company: string;
-  }) => {
-    const newUser: User = {
-      id: users.length + 1,
-      name: input.name,
-      username: input.name.toLowerCase().replace(/\s+/g, ""),
-      email: input.email,
-      address: {
-        street: "",
-        suite: "",
-        city: "",
-        zipcode: "",
-        geo: { lat: "0", lng: "0" },
-      },
-      phone: "",
-      website: "",
-      company: { name: input.company, catchPhrase: "", bs: "" },
-    };
-    setUsers((prev) => [...prev, newUser]);
-    showToast("Usuario creado exitosamente", "success");
-  };
+  const handleUserCreated = useCallback(
+    (input: CreateUserInput) => {
+      setUsers((prev) => {
+        const newUser: User = {
+          id: Math.max(0, ...prev.map((u) => u.id)) + 1,
+          name: input.name.trim(),
+          username: input.name.trim().toLowerCase().replace(/\s+/g, ""),
+          email: input.email.trim(),
+          address: {
+            street: "",
+            suite: "",
+            city: "",
+            zipcode: "",
+            geo: { lat: "0", lng: "0" },
+          },
+          phone: "",
+          website: "",
+          company: { name: input.company.trim(), catchPhrase: "", bs: "" },
+        };
+        return [...prev, newUser];
+      });
+
+      showToast("Usuario creado exitosamente", "success");
+      setIsModalOpen(false);
+    },
+    [showToast],
+  );
 
   return (
     <div>
@@ -85,8 +96,8 @@ export default function UserDashboard({ initialUsers }: UserDashboardProps) {
       </div>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {filteredUsers.map((user, index) => (
-          <UserCard key={index} user={user} />
+        {filteredUsers.map((user) => (
+          <UserCard key={user.id} user={user} />
         ))}
       </div>
 
