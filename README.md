@@ -117,3 +117,52 @@ Evalúa la arquitectura actual de los componentes. Si encuentras componentes con
 - Toda la lógica de estilos debe usar TailwindCSS
 - Los cambios deben hacerse mediante commits claros y descriptivos
 - El proyecto debe compilar sin errores de TypeScript
+
+
+# Documentación con actualizaciones
+
+## Estructura del Proyecto
+
+```
+app/
+  layout.tsx              # Layout raíz con ToastProvider y AppShell
+  page.tsx                # Página principal (Server Component)
+  error.tsx               # Manejo de errores a nivel de ruta
+  not-found.tsx           # Página 404
+  users/
+    [id]/
+      page.tsx            # Detalle de usuario (Server Component)
+
+components/
+  AppShell.tsx            # Wrapper de layout con navegación
+  UserCard.tsx            # Tarjeta de usuario
+  SearchBar.tsx           # Barra de búsqueda
+  CreateUserModal.tsx     # Modal de creación de usuario
+  ToastProvider.tsx       # Sistema de notificaciones toast
+  UserDashboard.tsx       # Dashboard interactivo (Client Component)
+  UserDetail.tsx          # Card de detalle de usuario
+  UserPosts.tsx           # Listado de posts del usuario
+lib/
+  api.ts                  # Instancia de Axios configurada
+  userService.ts          # Funciones de servicio para usuarios
+  postService.ts          # Funciones de servicios para posts
+types/
+  user.ts                 # Tipos TypeScript para usuarios
+  api-error.ts            # Tipso TypeScript para errores de api
+  post.ts                 # Tipos TypeScript para posts
+  utils.ts                # Utilidades de TypeScript
+  
+.env                      # Variables de Entorno (Crear con URL de la api)
+```
+
+## Revisiones hechas
+
+- Se implementó el uso de variable de entorno para seguridad de la API
+- Se movió el componente UserDashboard al lugar correspondiente
+- Se hizo una separación de responsabilidades en el detalle de usuario
+- Se implementaron mejoras de accesibilidad requeridas
+- Se ajustó el Layout (Ahora AppShell, nombre más coherente) para que no tuviera que importarse en cada vista sino solo en Layout.tsx
+- Se hicieron mejoras en el rendimiento como el uso de useMemo, useCallback, uso de la key correctamente, etc.
+- Se implementó la creación de usuarios (en local) con validaciones sin librerías adicionales.
+- Correcciones sutiles en todo el sistema. 
+- BONUS: Lista de publicaciones por el usuario en el detalle del usuario. 
